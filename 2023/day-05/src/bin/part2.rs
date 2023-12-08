@@ -1,4 +1,6 @@
 use std::collections::HashMap;
+use indicatif::ParallelProgressIterator;
+use rayon::prelude::*;
 
 fn main() {
     let input = include_str!("./input.txt");
@@ -125,83 +127,81 @@ fn part2(input: &str) -> u64 {
         .collect();
 
     // println!("{:?}", humidity_to_location);
-    let mut seed_location_map: HashMap<u64, u64> = HashMap::new();
-    let mut soil_location_map: HashMap<u64, u64> = HashMap::new();
-    let mut fertilizer_location_map: HashMap<u64, u64> = HashMap::new();
-    let mut water_location_map: HashMap<u64, u64> = HashMap::new();
-    let mut light_location_map: HashMap<u64, u64> = HashMap::new();
-    let mut temp_location_map: HashMap<u64, u64> = HashMap::new();
-    let mut humidity_location_map: HashMap<u64, u64> = HashMap::new();
+    // let mut seed_location_map: HashMap<u64, u64> = HashMap::new();
+    // let mut soil_location_map: HashMap<u64, u64> = HashMap::new();
+    // let mut fertilizer_location_map: HashMap<u64, u64> = HashMap::new();
+    // let mut water_location_map: HashMap<u64, u64> = HashMap::new();
+    // let mut light_location_map: HashMap<u64, u64> = HashMap::new();
+    // let mut temp_location_map: HashMap<u64, u64> = HashMap::new();
+    // let mut humidity_location_map: HashMap<u64, u64> = HashMap::new();
 
-    seed_ranges.into_iter().map(|(a, b)| {
-        println!("Range: {} - {}", a, b);
-        (a..b).map(|seed| {
-            if seed_location_map.contains_key(&seed) {
-                return seed_location_map[&seed];
-            }
+    seed_ranges.iter().flat_map(|range| (range.0..range.1)).collect::<Vec<u64>>().into_par_iter().progress()
+        .map(|seed| {
+            // if seed_location_map.contains_key(&seed) {
+            //     return seed_location_map[&seed];
+            // }
             let soil = seed_to_soil.iter().find(|s| s.contains(seed)).map_or_else(|| seed, |b| b.get_value(seed));
-            if soil_location_map.contains_key(&soil) {
-                let loc = soil_location_map[&soil];
-                seed_location_map.insert(seed, loc);
-                return loc;
-            }
+            // if soil_location_map.contains_key(&soil) {
+            //     let loc = soil_location_map[&soil];
+            //     seed_location_map.insert(seed, loc);
+            //     return loc;
+            // }
             let fertilizer = soil_to_fertilizer.iter().find(|s| s.contains(soil)).map_or_else(|| soil, |b| b.get_value(soil));
-            if fertilizer_location_map.contains_key(&fertilizer) {
-                let loc = fertilizer_location_map[&fertilizer];
-                seed_location_map.insert(seed, loc);
-                soil_location_map.insert(soil, loc);
-                return loc;
-            }
+            // if fertilizer_location_map.contains_key(&fertilizer) {
+            //     let loc = fertilizer_location_map[&fertilizer];
+            //     seed_location_map.insert(seed, loc);
+            //     soil_location_map.insert(soil, loc);
+            //     return loc;
+            // }
             let water = fertilizer_to_water.iter().find(|s| s.contains(fertilizer)).map_or_else(|| fertilizer, |b| b.get_value(fertilizer));
-            if water_location_map.contains_key(&water) {
-                let loc = water_location_map[&water];
-                seed_location_map.insert(seed, loc);
-                soil_location_map.insert(soil, loc);
-                fertilizer_location_map.insert(fertilizer, loc);
-                return loc;
-            }
+            // if water_location_map.contains_key(&water) {
+            //     let loc = water_location_map[&water];
+            //     seed_location_map.insert(seed, loc);
+            //     soil_location_map.insert(soil, loc);
+            //     fertilizer_location_map.insert(fertilizer, loc);
+            //     return loc;
+            // }
             let light = water_to_light.iter().find(|s| s.contains(water)).map_or_else(|| water, |b| b.get_value(water));
-            if light_location_map.contains_key(&light) {
-                let loc = light_location_map[&light];
-                seed_location_map.insert(seed, loc);
-                soil_location_map.insert(soil, loc);
-                fertilizer_location_map.insert(fertilizer, loc);
-                water_location_map.insert(water, loc);
-                return loc;
-            }
+            // if light_location_map.contains_key(&light) {
+            //     let loc = light_location_map[&light];
+            //     seed_location_map.insert(seed, loc);
+            //     soil_location_map.insert(soil, loc);
+            //     fertilizer_location_map.insert(fertilizer, loc);
+            //     water_location_map.insert(water, loc);
+            //     return loc;
+            // }
             let temperature = light_to_temperature.iter().find(|s| s.contains(light)).map_or_else(|| light, |b| b.get_value(light));
-            if temp_location_map.contains_key(&temperature) {
-                let loc = temp_location_map[&temperature];
-                seed_location_map.insert(seed, loc);
-                soil_location_map.insert(soil, loc);
-                fertilizer_location_map.insert(fertilizer, loc);
-                water_location_map.insert(water, loc);
-                light_location_map.insert(light, loc);
-                return loc;
-            }
+            // if temp_location_map.contains_key(&temperature) {
+            //     let loc = temp_location_map[&temperature];
+            //     seed_location_map.insert(seed, loc);
+            //     soil_location_map.insert(soil, loc);
+            //     fertilizer_location_map.insert(fertilizer, loc);
+            //     water_location_map.insert(water, loc);
+            //     light_location_map.insert(light, loc);
+            //     return loc;
+            // }
             let humidity = temperature_to_humidity.iter().find(|s| s.contains(temperature)).map_or_else(|| temperature, |b| b.get_value(temperature));
-            if humidity_location_map.contains_key(&humidity) {
-                let loc = humidity_location_map[&humidity];
-                seed_location_map.insert(seed, loc);
-                soil_location_map.insert(soil, loc);
-                fertilizer_location_map.insert(fertilizer, loc);
-                water_location_map.insert(water, loc);
-                light_location_map.insert(light, loc);
-                temp_location_map.insert(temperature, loc);
-                return loc;
-            }
+            // if humidity_location_map.contains_key(&humidity) {
+            //     let loc = humidity_location_map[&humidity];
+            //     seed_location_map.insert(seed, loc);
+            //     soil_location_map.insert(soil, loc);
+            //     fertilizer_location_map.insert(fertilizer, loc);
+            //     water_location_map.insert(water, loc);
+            //     light_location_map.insert(light, loc);
+            //     temp_location_map.insert(temperature, loc);
+            //     return loc;
+            // }
             let location = humidity_to_location.iter().find(|s| s.contains(humidity)).map_or_else(|| humidity, |b| b.get_value(humidity));
 
-            seed_location_map.insert(seed, location);
-            soil_location_map.insert(soil, location);
-            fertilizer_location_map.insert(fertilizer, location);
-            water_location_map.insert(water, location);
-            light_location_map.insert(light, location);
-            temp_location_map.insert(temperature, location);
-            humidity_location_map.insert(humidity, location);
+            // seed_location_map.insert(seed, location);
+            // soil_location_map.insert(soil, location);
+            // fertilizer_location_map.insert(fertilizer, location);
+            // water_location_map.insert(water, location);
+            // light_location_map.insert(light, location);
+            // temp_location_map.insert(temperature, location);
+            // humidity_location_map.insert(humidity, location);
             location
         }).min().unwrap()
-    }).min().unwrap()
 }
 
 #[cfg(test)]
