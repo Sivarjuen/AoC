@@ -4,8 +4,8 @@ fn main() {
     dbg!(output);
 }
 
-fn part1(input: &str) -> String {
-    "todo".to_string()
+fn part1(input: &str) -> u64 {
+    0
 }
 
 #[cfg(test)]
@@ -14,6 +14,6 @@ mod tests {
     #[test]
     fn sample() {
         let result = part1("");
-        assert_eq!(result, "todo".to_string());
+        assert_eq!(result, 0);
     }
 }
